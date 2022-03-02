@@ -66,4 +66,42 @@ describe "DotnetTest"
     Expect actual == 'dotnet test Tests.csproj'
   end
 
+  it "runs nearest test for nested tests"
+    view NestedTests.cs
+    view +10
+    TestNearest
+
+    let actual = s:remove_path(g:test#last_command)
+    Expect actual == 'dotnet test Tests.csproj --filter FullyQualifiedName=Namespace.Parent+NestedTests.TestAsync'
+
+    view +16
+    TestNearest
+
+    let actual = s:remove_path(g:test#last_command)
+    Expect actual == 'dotnet test Tests.csproj --filter FullyQualifiedName=Namespace.Parent+NestedTests.Test'
+
+    view +24
+    TestNearest
+
+    let actual = s:remove_path(g:test#last_command)
+    Expect actual == 'dotnet test Tests.csproj --filter FullyQualifiedName=Namespace.Parent+NestedTests+DeeplyNestedTests.TestAsync'
+  end
+
+  it "runs tests for parent class for nested tests"
+    view NestedTests.cs
+    view +5
+    TestNearest
+
+    let actual = s:remove_path(g:test#last_command)
+    Expect actual == 'dotnet test Tests.csproj --filter FullyQualifiedName~Namespace.Parent+NestedTests'
+  end
+
+  it "runs tests for file with nested tests if nearest test couldn't found"
+    view +2 NestedTests.cs
+    normal O
+    TestNearest
+
+    let actual = s:remove_path(g:test#last_command)
+    Expect actual == 'dotnet test Tests.csproj --filter FullyQualifiedName~Namespace'
+  end
 end

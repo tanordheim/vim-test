@@ -15,6 +15,15 @@ namespace Namespace
             {
                 Assert.Equal(true, false);
             }
+
+            public class DeeplyNestedTests
+            {
+                [Fact]
+                public async void TestAsync()
+                {
+                    Assert.Equal(true, false);
+                }
+            }
         }
     }
 }

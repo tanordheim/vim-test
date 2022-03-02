@@ -17,6 +17,9 @@ function! test#csharp#dotnettest#build_position(type, position) abort
   let project_path = test#csharp#get_project_path(file)
   let name = test#base#nearest_test(a:position, g:test#csharp#patterns, { 'namespaces_with_same_indent': 1 })
   let namespace = join(name['namespace'], '.')
+  if len(name['namespace']) > 2
+    let namespace = join(name['namespace'][:1], '.') .. '+' .. join(name['namespace'][2:], '+')
+  endif
   let test_name = join(name['test'], '.')
   let nearest_test = join([namespace, test_name], '.')
 
